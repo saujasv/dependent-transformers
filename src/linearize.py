@@ -1,14 +1,3 @@
-class Word:
-    def __init__(self, text, index, governor, dep_rel):
-        self.text = text
-        self.index = index
-        self.governor = governor
-        self.dependency_relation = dep_rel
-
-class Sentence:
-    def __init__(self, words):
-        self.words = words
-
 def linearize_dep_tree(sentence, lexicalized=True):
     tree = {int(word.index): list() for word in sentence.words}
     tree[0] = list()
