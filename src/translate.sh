@@ -21,4 +21,4 @@ onmt_translate \
 	--length_penalty avg \
 	--output $output_path 
 
-python get_bleu_score.py $data_path$model_lang"_text.txt" $output_path
+python get_bleu_score.py $data_path$model_lang"_test.txt" $output_path
