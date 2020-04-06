@@ -9,6 +9,7 @@ model_name=$1
 model_lang=$2
 model_preds=$model_name"_preds.txt"
 data_path="./../data/splits/test/"
+mkdir -p "./../predictions/"
 output_path="./../predictions/"$model_preds
 
 
