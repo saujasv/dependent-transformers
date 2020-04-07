@@ -1,5 +1,5 @@
 class Word:
-    def __init__(self, text, index, governor, dep_rel):
+    def __init__(self, text=None, index=None, governor=None, dep_rel=None):
         self.text = text
         self.index = index
         self.governor = governor
