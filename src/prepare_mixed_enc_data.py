@@ -28,4 +28,4 @@ if __name__ == "__main__":
     parser.add_argument("--train_trg", type=argparse.FileType('w'), help="File to write target sentences for training")
 
     args = parser.parse_args()
-    generate_training_pairs(args.source_sentences, list(zip(args.target_task_tags, args.target_task_files)), args.train_src, args.train_trg)
+    generate_training_pairs(args.target_sentences, args.source_task_files, args.train_src, args.train_trg)
