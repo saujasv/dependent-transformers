@@ -5,15 +5,15 @@ def generate_training_pairs(trg_sentences, src_tasks, train_src, train_trg):
     trg_lc = get_line_count(trg_sentences)
     src_lc = [get_line_count(src_file) for src_file in src_tasks]
 
-    for lc in trg_lc:
-        if lc != src_lc:
+    for lc in src_lc:
+        if lc != trg_lc:
             raise CountError
 
     for src_file in src_tasks:
         trg_sentences.seek(0, 0)
         src_file.seek(0, 0)
         i = 0
-        while i < src_lc:
+        while i < trg_lc:
             t = trg_sentences.readline().strip()
             s = src_file.readline().strip()
             train_src.write(s + '\n')
