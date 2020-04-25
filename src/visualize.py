@@ -13,6 +13,7 @@ def _get_parser():
     visualize_opts(parser)
     return parser
 
-parser = _get_parser()
-opt = parser.parse_args()
-fields, model, model_opts = load_test_model(opt)
+def visualize():
+    parser = _get_parser()
+    opt = parser.parse_args()
+    fields, model, model_opts = load_test_model(opt)
