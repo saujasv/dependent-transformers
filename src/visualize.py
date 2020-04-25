@@ -13,7 +13,11 @@ def _get_parser():
     visualize_opts(parser)
     return parser
 
-def visualize():
+def main():
     parser = _get_parser()
     opt = parser.parse_args()
     fields, model, model_opts = load_test_model(opt)
+    print(model.__dict__)
+
+if __name__ == "__main__":
+    main()
