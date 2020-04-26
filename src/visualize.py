@@ -1,3 +1,4 @@
+import pickle
 import torch
 from onmt.utils.parse import ArgumentParser
 from onmt.model_builder import load_test_model
@@ -127,7 +128,7 @@ def get_encoder_attn(model, src, fields, batch_size, gpu):
     attns = list()
     for batch in data_iter:
         batch_attn = get_encoder_attn_for_batch(model, batch)
-        attns.append(batch_attn)
+        attns.append((batch, batch_attn))
     
     return attns
 
@@ -136,10 +137,12 @@ def main():
     opt = parser.parse_args()
     fields, model, model_opts = load_test_model(opt)
     src_shards = split_corpus(opt.src, opt.shard_size)
+    shard_attns = list()
     for src in src_shards:
         attns = get_encoder_attn(model, src, fields, opt.batch_size, opt.gpu)
-        print(attns[0][0].shape)
-        break
+        shard_attns.append(attns)
+    with open("attn_dump.pkl", 'w') as f:
+        pickle.dump(shard_attns, f)
 
 if __name__ == "__main__":
     main()
