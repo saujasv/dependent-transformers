@@ -101,7 +101,7 @@ def get_encoder_attn_for_batch(model, batch):
     return attns
 
 def get_encoder_attn(model, src, fields, batch_size, gpu):
-    src_data = {"reader": inputters.TextDataReader()), "data": src, "dir": None}
+    src_data = {"reader": inputters.TextDataReader(), "data": src, "dir": None}
     _readers, _data, _dir = inputters.Dataset.config([('src', src_data)])
 
     data = inputters.Dataset(
@@ -129,6 +129,8 @@ def get_encoder_attn(model, src, fields, batch_size, gpu):
     for batch in data_iter:
         batch_attn = get_encoder_attn_for_batch(model, batch)
         attns.append((batch, batch_attn))
+        with open("attn_dump.pkl", 'w') as f:
+            pickle.dump((batch, batch_attn), f)
     
     return attns
 
@@ -139,10 +141,8 @@ def main():
     src_shards = split_corpus(opt.src, opt.shard_size)
     shard_attns = list()
     for src in src_shards:
-        attns = get_encoder_attn(model, src, fields, opt.batch_size, opt.gpu)
+        attns = get_encoder_attn(model.encoder, src, fields, opt.batch_size, opt.gpu)
         shard_attns.append(attns)
-    with open("attn_dump.pkl", 'w') as f:
-        pickle.dump(shard_attns, f)
 
 if __name__ == "__main__":
     main()
