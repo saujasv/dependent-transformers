@@ -3,7 +3,7 @@ import torch
 from onmt.utils.parse import ArgumentParser
 from onmt.model_builder import load_test_model
 from onmt.utils.misc import sequence_mask
-from onmt.translate import max_tok_len
+from onmt.translate.translator import max_tok_len
 from onmt.utils.misc import split_corpus
 import onmt.inputters as inputters
 
@@ -101,7 +101,7 @@ def get_encoder_attn_for_batch(model, batch):
     return attns
 
 def get_encoder_attn(model, src, fields, batch_size, gpu):
-    src_data = {"reader": inputters.TextDataReader.from_opts(None), "data": src, "dir": None}
+    src_data = {"reader": inputters.TextDataReader()), "data": src, "dir": None}
     _readers, _data, _dir = inputters.Dataset.config([('src', src_data)])
 
     data = inputters.Dataset(
