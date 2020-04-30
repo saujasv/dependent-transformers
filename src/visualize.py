@@ -97,9 +97,7 @@ def get_transformer_encoder_attn(model, src, lengths=None):
 
     return emb, out.transpose(0, 1).contiguous(), lengths, attn_matrices
 
-def get_encoder_attn_for_batch(model, batch):
-    src, src_lengths = batch.src if isinstance(batch.src, tuple) \
-                        else (batch.src, None)
+def get_encoder_attn_for_batch(model, src, src_lengths):
 
     enc_states, memory_bank, src_lengths, attns = get_transformer_encoder_attn(model, src, src_lengths)
     return attns
@@ -132,7 +130,7 @@ def store_encoder_attn(model, src, fields, batch_size, gpu, file_name):
     for i, batch in enumerate(data_iter):
         src, src_lengths = batch.src if isinstance(batch.src, tuple) \
                            else (batch.src, None)
-        batch_attn = get_encoder_attn_for_batch(model, src)
+        batch_attn = get_encoder_attn_for_batch(model, src, src_lengths)
         with open(file_name, 'ab') as f:
             pickle.dump((data_iter.batches[i], batch_attn), f)
 
