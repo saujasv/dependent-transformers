@@ -47,5 +47,6 @@ if __name__ == "__main__":
     parser.add_argument("--head", type=int, help="Index of attention head")
 
     args = parser.parse_args()
+    metadata = pickle.load(args.metadata)
     sentences = from_file(args.attention_matrices, args.layer, args.head)
-    write_to_conllu(sentences, args.output_file, args.metadata)
+    write_to_conllu(sentences, args.output_file, metadata)
