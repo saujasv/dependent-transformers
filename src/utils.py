@@ -1,3 +1,5 @@
+import re
+
 class Word:
     def __init__(self, text=None, index=None, governor=None, dep_rel=None):
         self.text = text
@@ -28,6 +30,9 @@ class Sentence:
     
     def get_words(self):
         return [w.text for w in self.words]
+    
+    def to_conllu(self):
+        return "\n".join(["\t".join([str(w.index), w.text, '_', '_', '_', '_', str(w.governor), '_', '_', '_']) for w in self.words])
 
 class CountError(Exception):
     pass

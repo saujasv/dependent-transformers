@@ -6,6 +6,8 @@ from onmt.utils.misc import sequence_mask
 from onmt.translate.translator import max_tok_len
 from onmt.utils.misc import split_corpus
 import onmt.inputters as inputters
+from allennlp.nn.chu_liu_edmonds import decode_mst
+from utils import *
 
 def visualize_opts(parser):
     """ Visualization options """
@@ -118,10 +120,10 @@ def get_encoder_attn(model, src, fields, batch_size, gpu):
         dataset=data,
         device=_dev,
         batch_size=batch_size,
-        batch_size_fn=max_tok_len,
+        batch_size_fn=None,
         train=False,
         sort=False,
-        sort_within_batch=True,
+        sort_within_batch=False,
         shuffle=False
     )
 
@@ -129,8 +131,6 @@ def get_encoder_attn(model, src, fields, batch_size, gpu):
     for batch in data_iter:
         batch_attn = get_encoder_attn_for_batch(model, batch)
         attns.append((batch, batch_attn))
-        with open("attn_dump.pkl", 'w') as f:
-            pickle.dump((batch, batch_attn), f)
     
     return attns
 

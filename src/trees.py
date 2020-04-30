@@ -30,6 +30,9 @@ class DependencyTree:
     
     def linearize(self, lexicalized=True):
         return self.__traverse(0, '', lexicalized)
+    
+    def to_conllu(self):
+        return "\n".join(["\t".join([w.index, w.text, '_', '_', '_', '_', w.governor, '_', '_', '_']) for w in self.sentence])
 
 class ConstituencyNode:
     def __init__(self, label, children=None, word=False):
