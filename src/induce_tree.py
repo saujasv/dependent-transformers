@@ -23,20 +23,19 @@ def from_file(f, layer, head):
             break
     return sentences 
 
-def write_to_conllu(sentences, file_name, metadata):
+def write_to_conllu(sentences, outfile, metadata):
     i = 0
     j = 0
     curr_doc = metadata['all_docs'][i]
-    with open(file_name, 'w') as f:
-        for sent in sentences:
-            if j == 0:
-                f.write("# newdoc id = " + curr_doc + '\n')
-            f.write("# sent_id = " + metadata[curr_doc][j] + '\n')
-            f.write(sent.to_conllu() + '\n\n')
-            if j == len(metadata[curr_doc]) - 1:
-                i += 1
-                j = 0
-                curr_doc = metadata['all_docs'][i]
+    for sent in sentences:
+        if j == 0:
+            outfile.write("# newdoc id = " + curr_doc + '\n')
+        outfile.write("# sent_id = " + metadata[curr_doc][j] + '\n')
+        outfile.write(sent.to_conllu() + '\n\n')
+        if j == len(metadata[curr_doc]) - 1:
+            i += 1
+            j = 0
+            curr_doc = metadata['all_docs'][i]
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
