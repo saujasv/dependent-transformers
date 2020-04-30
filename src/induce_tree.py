@@ -12,7 +12,9 @@ def from_file(f, layer, head):
     sentences = list()
     while True:
         try:
-            batch, attn_matrices = pickle.load(f)
+            batch_dict = pickle.load(f)
+            batch = batch_dict['batch']
+            attn_matrices = batch_dict['matrices']
             for i, example in enumerate(batch):
                 sent = example.src[0]
                 attn = attn_matrices[layer].detach().numpy()

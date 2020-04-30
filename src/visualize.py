@@ -56,9 +56,9 @@ def visualize_opts(parser):
                    "shard_size=0 means no segmentation "
                    "shard_size>0 means segment dataset into multiple shards, "
                    "each shard has shard_size samples")
-    group.add('--output', '-output', default='pred.txt',
-              help="Path to output the predictions (each line will "
-                   "be the decoded sequence")
+    # group.add('--output', '-output', default='pred.txt',
+    #           help="Path to output the predictions (each line will "
+    #                "be the decoded sequence")
     group.add('--report_align', '-report_align', action='store_true',
               help="Report alignment for each translation.")
     group.add('--report_time', '-report_time', action='store_true',
@@ -132,7 +132,7 @@ def store_encoder_attn(model, src, fields, batch_size, gpu, file_name):
                            else (batch.src, None)
         batch_attn = get_encoder_attn_for_batch(model, src, src_lengths)
         with open(file_name, 'ab') as f:
-            pickle.dump((data_iter.batches[i], batch_attn), f)
+            pickle.dump({'batch': data_iter.batches[i], 'matrices': batch_attn}, f)
 
 def main():
     parser = _get_parser()
