@@ -6,8 +6,6 @@ from onmt.utils.misc import sequence_mask
 from onmt.translate.translator import max_tok_len
 from onmt.utils.misc import split_corpus
 import onmt.inputters as inputters
-from allennlp.nn.chu_liu_edmonds import decode_mst
-from utils import *
 
 def visualize_opts(parser):
     """ Visualization options """
@@ -15,6 +13,9 @@ def visualize_opts(parser):
     group.add('--model', '-model', dest='models', metavar='MODEL', 
             nargs='+', type=str, default=[], required=True,
             help="Path to model .pt file.")
+    group.add('--output', '-output', dest='out_file', metavar='MODEL', 
+            type=str, default=None, required=True,
+            help="Path to output binary file.")
     group.add('--fp32', '-fp32', action='store_true',
               help="Force the model to be in FP32 "
                    "because FP16 is very slow on GTX1080(ti).")
@@ -91,6 +92,7 @@ def get_transformer_encoder_attn(model, src, lengths=None):
     # Run the forward pass of every layer of the tranformer.
     for layer in model.transformer:
         out, attns = transformer_encoder_forward_with_attn(layer, out, mask)
+        attns.detach()
         attn_matrices.append(attns)
 
     return emb, out.transpose(0, 1).contiguous(), lengths, attn_matrices
@@ -102,7 +104,7 @@ def get_encoder_attn_for_batch(model, batch):
     enc_states, memory_bank, src_lengths, attns = get_transformer_encoder_attn(model, src, src_lengths)
     return attns
 
-def get_encoder_attn(model, src, fields, batch_size, gpu):
+def store_encoder_attn(model, src, fields, batch_size, gpu, file_name):
     src_data = {"reader": inputters.TextDataReader(), "data": src, "dir": None}
     _readers, _data, _dir = inputters.Dataset.config([('src', src_data)])
 
@@ -127,22 +129,20 @@ def get_encoder_attn(model, src, fields, batch_size, gpu):
         shuffle=False
     )
 
-    attns = list()
-    for batch in data_iter:
-        batch_attn = get_encoder_attn_for_batch(model, batch)
-        attns.append((batch, batch_attn))
-    
-    return attns
+    for i, batch in enumerate(data_iter):
+        src, src_lengths = batch.src if isinstance(batch.src, tuple) \
+                           else (batch.src, None)
+        batch_attn = get_encoder_attn_for_batch(model, src)
+        with open(file_name, 'ab') as f:
+            pickle.dump((data_iter.batches[i], batch_attn), f)
 
 def main():
     parser = _get_parser()
     opt = parser.parse_args()
     fields, model, model_opts = load_test_model(opt)
     src_shards = split_corpus(opt.src, opt.shard_size)
-    shard_attns = list()
     for src in src_shards:
-        attns = get_encoder_attn(model.encoder, src, fields, opt.batch_size, opt.gpu)
-        shard_attns.append(attns)
+        store_encoder_attn(model.encoder, src, {'src': fields['src']}, opt.batch_size, opt.gpu, opt.out_file)
 
 if __name__ == "__main__":
     main()
