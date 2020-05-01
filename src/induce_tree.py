@@ -35,7 +35,7 @@ def write_to_conllu(sentences, outfile, metadata):
         if j == 0:
             outfile.write("# newdoc id = " + curr_doc + '\n')
         outfile.write("# sent_id = " + metadata[curr_doc][j] + '\n')
-        outfile.write("# text = " + " ".join(sent.get_words()))
+        outfile.write("# text = " + " ".join(sent.get_words()) + '\n')
         outfile.write(sent.to_conllu() + '\n\n')
         j += 1
 
