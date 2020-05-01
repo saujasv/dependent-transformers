@@ -108,7 +108,7 @@ def store_encoder_attn(model, src, fields, batch_size, gpu, file_name):
 
     data = inputters.Dataset(
         fields, readers=_readers, data=_data, dirs=_dir,
-        sort_key=inputters.str2sortkey["text"],
+        sort_key=lambda x: 0,
         filter_pred=None
     )
 
