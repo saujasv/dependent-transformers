@@ -17,7 +17,7 @@ def from_file(f, layer, head):
             attn_matrices = batch_dict['matrices']
             for i, example in enumerate(batch):
                 sent = example.src[0]
-                attn = attn_matrices[layer].detach().numpy()
+                attn = attn_matrices[layer].cpu().detach().numpy()
                 sentences.append(get_parse_from_attention_matrix(sent, attn[i, head, :, :]))
         except EOFError:
             break
