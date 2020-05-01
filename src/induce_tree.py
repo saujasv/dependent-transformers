@@ -28,16 +28,16 @@ def write_to_conllu(sentences, outfile, metadata):
     j = 0
     curr_doc = metadata['all_docs'][i]
     for sent in sentences:
+        if j == len(metadata[curr_doc]):
+            i += 1
+            j = 0
+            curr_doc = metadata['all_docs'][i]
         if j == 0:
             outfile.write("# newdoc id = " + curr_doc + '\n')
         outfile.write("# sent_id = " + metadata[curr_doc][j] + '\n')
         outfile.write("# text = " + " ".join(sent.get_words()))
         outfile.write(sent.to_conllu() + '\n\n')
         j += 1
-        if j == len(metadata[curr_doc]):
-            i += 1
-            j = 0
-            curr_doc = metadata['all_docs'][i]
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
